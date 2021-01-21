@@ -1,0 +1,336 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*<link href="~/Scripts/AdminLTE-With-Iframe/plugins/Toast/toastr.min.css" rel="stylesheet" />*@
+<!--提示-->
+@*<link href="~/Scripts/AdminLTE-With-Iframe/plugins/Toast/toastr.css" rel="stylesheet" />
+    <script src="~/Scripts/AdminLTE-With-Iframe/plugins/Toast/toastr.min.js"></script>
+    <script>
+        toastr.options.positionClass = 'toast-top-center';
+    </script>*@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>用户管理</title>
+    <style>
+        .navigation {
+            width: 100%;
+            height: 48px;
+            line-height: 46px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e2e2e2;
+            /*margin-bottom: 20px;*/
+        }
+
+            .navigation ul {
+                margin: 0;
+                padding: 0;
+                overflow-x: auto;
+                list-style: none;
+                white-space: nowrap;
+                width: auto;
+            }
+
+                .navigation ul li {
+                    margin-left: 20px;
+                    display: inline-block;
+                }
+
+        /*.ui-jqgrid .ui-jqgrid-title {
+            font-size: 22px;
+        }*/
+        /*修改grid标题的字体大小*/
+
+        /*.ui-jqgrid-sortable {
+            font-size: 14px;
+            height：28px;
+        }*/
+
+        .ui-jqgrid .ui-jqgrid-htable th div {
+            font-size: 14px;
+            height: 25px;
+            line-height: 25px;
+        }
+        /*修改列名的字体大小*/
+        .ui-jqgrid tr.jqgrow td {
+            font-size: 14px;
+            height: 25px;
+            /*font-family: "宋体"*/
+        }
+        /*修改表格内容字体*/
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <ul>
+            <li><button type="button" class="btn btn-block btn-info btn-sm" onclick="search()"><span class="glyphicon glyphicon-search"></span> 查询</button></li>
+            <li><button type="button" class="btn btn-block btn-info btn-sm" id="add" onclick="Add()"><span class="glyphicon glyphicon-plus"></span> 添加</button></li>
+            <li><button type="button" class="btn btn-block btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span> 修改</button></li>
+            <li><button type="button" class="btn btn-block btn-success btn-sm" onclick="deleteobj()"><span class="glyphicon glyphicon-remove"></span> 删除</button></li>
+            @*<li><button type="button" class="btn btn-block btn-danger btn-sm"><span class="	glyphicon glyphicon-arrow-down"></span> 导入</button></li>
+                <li><button type="button" class="btn btn-block btn-warning btn-sm"><span class="glyphicon glyphicon-arrow-up"></span> 导出</button></li>
+                <li><button type="button" class="btn btn-block btn-default btn-sm" onclick="test()"><span class="glyphicon glyphicon-print"></span> 打印</button></li>*@
+        </ul>
+    </div>
+    <div style="height: 100%;">
+        <!--toolbar-->
+        <!-- search -->
+        @*<div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="form-inline" role="form">
+                                <div class="form-group">
+                                    <label for="name">用户名:</label>
+                                    <input type="text" class="form-control" name="name" placeholder="">
+                                </div>
+                                <div class="form-group">
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        @*<section class="content" style=" height: auto;  min-height:65px; border:1px solid #ddd;  ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <label for="name">用户名:</label>
+                                <input type="text" class="form-control" name="name" placeholder="">
+                            </div>
+                            <div class="form-group">
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>*@
+
+        <form class="layui-form" action="" style="margin-top:20px;">
+            <div class="layui-form-item">
+
+                <label class="layui-form-label" style="width:auto;">推车编号</label>
+                <div class="layui-inline">
+                    <input type="text" name="title" autocomplete="off" class="layui-input" style="height:30px;">
+                </div>
+
+                <button class="layui-btn layui-btn-sm" lay-submit="search">搜索</button>
+
+            </div>
+        </form>
+
+        <!--增加的弹框-->
+        <form class="layui-form layui-form-pane1" id="form" name="form" style="display: none;" action="<%=request.getContextPath()%>/admin/addAdmin" method="post" lay-filter="first">
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>用户信息</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <label class="layui-form-label">推车编号</label>
+                <div class="layui-input-inline">
+                    <select name="city" lay-verify="validateselect" lay-verType="tips" autocomplete="off">
+                        <option value="">请选择</option>
+                        <option value="010">111111111111111111</option>
+                        <option value="021">222222222222222</option>
+                        <option value="0571">33333333333333</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" lay-verify="required|" required placeholder="请输入用户名" lay-verType="tips" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="男" title="男" checked=""><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon"></i><div>男</div></div>
+                    <input type="radio" name="sex" value="女" title="女"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>女</div></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">年龄</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="age" autocomplete="off" lay-verify="required|" required placeholder="请输入年龄" lay-verType="tips" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="IDcard" lay-verify="required|identity" required placeholder="请输入身份证号" lay-verType="tips" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机</label>
+                <div class="layui-input-inline">
+                    <input type="tel" name="phone" lay-verify="required|number|phone" placeholder="请输入使用者手机号码" lay-verType="tips" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">添加</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+            <!-- <div class="layui-layer-btn layui-layer-btn-"><a class="layui-layer-btn0">继续弹出</a><a class="layui-layer-btn1">全部关闭</a></div> -->
+        </form>
+
+        <!--工具条-->
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+
+        <div style="padding: 0px; background-color: #F2F2F2;">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        @*<div class="layui-card-header">标题</div>*@
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="demo" lay-filter="demo"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div style="padding: 20px; background-color: #F2F2F2;">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">卡片面板</div>
+                            <div class="layui-card-body">
+                                卡片式面板面板通常用于非白色背景色的主体内<br>
+                                从而映衬出边框投影
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">卡片面板</div>
+                            <div class="layui-card-body">
+                                结合 layui 的栅格系统<br>
+                                轻松实现响应式布局
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">标题</div>
+                            <div class="layui-card-body">
+                                内容
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+    </div>
+
+</body>
+</html>
+
+
+<script>
+    layui.use('table', function () {
+        var table = layui.table;
+
+        //展示已知数据
+        table.render({
+            elem: '#demo',
+            url: '/Users/GetList',
+            method: 'post',
+            cols: [[
+                { type: 'checkbox' },
+                { field: 'uid', title: 'ID', width: 80, sort: true },
+                { field: 'name', title: '用户名', width: 80 },
+                { field: 'age', title: '年龄', width: 80 },
+                { field: 'account', title: '账号', width: 80 },
+                { field: 'password', title: '密码', width: 80 },
+                { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+            ]],
+            //,skin: 'line' //表格风格
+            parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
+            even: true,
+            page: true, //是否显示分页
+            limits: [5, 7, 10],
+            limit: 5 //每页默认显示的数量
+        });
+
+        //监听行工具事件(表格内部)
+        table.on('tool(demo)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    layer.close(index);
+                    deleteobj(data.uid, obj)
+
+                });
+            } else if (obj.event === 'edit') {
+                //修改
+                layer.open({
+                    title: '修改用户',
+                    type: 1,
+                    area: ['800px', '600px'],
+                    content: $("#form")
+                });
+
+            }
+        });
+
+    });
+
+    function deleteobj(id, obj) {
+        $.ajax({
+            url: "/Users/Delete",
+            type: "POST",
+            dataType: "json",
+            data: { "id": id },
+            async: true,
+            success: function (result) {
+                if (result.code == 1) {
+                    toastr.success("保存成功");
+                    obj.del();
+                }
+                else {
+                    toastr.success("保存失败");
+                }
+            },
+            beforeSend: function () {
+                loading7();
+            },
+            error: function () {
+
+            },
+            complete: function () {
+                removeLoading("");
+            }
+        });
+
+    }
+
+
+</script>
+
+
+
+

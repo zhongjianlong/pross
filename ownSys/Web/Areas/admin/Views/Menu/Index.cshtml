@@ -1,0 +1,362 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/AdminLTE-With-Iframe/bootstrap/js/bootstrap.min.js"></script>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>菜单管理</title>
+    <style>
+        .navigation {
+            width: 100%;
+            height: 48px;
+            line-height: 46px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e2e2e2;
+            /*margin-bottom: 20px;*/
+        }
+
+            .navigation ul {
+                margin: 0;
+                padding: 0;
+                overflow-x: auto;
+                list-style: none;
+                white-space: nowrap;
+                width: auto;
+            }
+
+                .navigation ul li {
+                    margin-left: 20px;
+                    display: inline-block;
+                }
+
+        body {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="skin-blue sidebar-mini" style="height: auto;">
+    <div style="height: auto;">
+        <!--toolbar-->
+        <div class="navigation">
+            <ul>
+                <li><button type="button" class="btn btn-block btn-info btn-sm" onclick="addFistNode()"><span class="glyphicon glyphicon-plus"></span> 添加第一级菜单</button></li>
+                @*<li><button type="button" class="btn btn-block btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span> 修改</button></li>
+                    <li><button type="button" class="btn btn-block btn-success btn-sm"><span class="glyphicon glyphicon-remove"></span> 删除</button></li>
+                    <li><button type="button" class="btn btn-block btn-info btn-sm" onclick="loading1()"><span class="glyphicon glyphicon-search"></span> 查询</button></li>
+                    <li><button type="button" class="btn btn-block btn-danger btn-sm"><span class="	glyphicon glyphicon-arrow-down"></span> 导入</button></li>
+                    <li><button type="button" class="btn btn-block btn-warning btn-sm"><span class="glyphicon glyphicon-arrow-up"></span> 导出</button></li>
+                    <li><button type="button" class="btn btn-block btn-default btn-sm"><span class="glyphicon glyphicon-print"></span> 打印</button></li>*@
+            </ul>
+        </div>
+        <!-- Main content -->
+        @*<section class="content" style="padding:5px; height: auto;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="layui-hide" id="demo"></table>
+                    </div>
+                </div>
+            </section>*@
+
+        @*<div style="padding: 5px; background-color: #F2F2F2;">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">菜单</div>
+                            <div class="layui-card-body">
+                                <table id="treetable1" class="layui-table" lay-filter="treetable1"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">卡片面板</div>
+                            <div class="layui-card-body">
+                                结合 layui 的栅格系统<br>
+                                轻松实现响应式布局
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+        <table id="table"></table>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">标题</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="menuForm">
+                        <div class="form-group">
+                            <label for="firstname" class="col-sm-2 control-label">名称：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="text" id="text" placeholder="请输入名称">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">URL：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="url" id="url" placeholder="请输入URL">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">iconCls：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="iconCls" id="iconCls" placeholder="请输入iconCls" value="iconCls">
+                            </div>
+                        </div>
+                        
+                        <input id="id" name="id" type="hidden" value="0" />
+                        <input id="fid" name="fid" type="hidden" value="0" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSubmit()">提交更改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</body>
+</html>
+
+@*<link href="~/Scripts/bootstrap3.3.6/bootstraptreegrid/css/bootstrap.3.3.7.css" rel="stylesheet">*@
+@*<link href="~/Scripts/bootstrap3.3.6/bootstraptreegrid/css/bootstrap-theme.css" rel="stylesheet">*@
+@*<link href="~/Scripts/bootstrap3.3.6/bootstraptreegrid/css/bootstrap-table.css" rel="stylesheet">*@
+<link href="~/Scripts/bootstrap3.3.6/bootstraptreegrid/css/jquery.treegrid.min.css" rel="stylesheet">
+@*<script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="js/bootstrap3.3.7.min.js"></script>*@
+<script type="text/javascript" src="~/Scripts/bootstrap3.3.6/bootstraptreegrid/js/bootstrap-table.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap3.3.6/bootstraptreegrid/js/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap3.3.6/bootstraptreegrid/js/bootstrap-table-treegrid.js"></script>
+<script type="text/javascript" src="~/Scripts/bootstrap3.3.6/bootstraptreegrid/js/jquery.treegrid.min.js"></script>
+@*<script src="~/Scripts/bootstrap3.3.6/bootstraptreegrid/js/bootstrap3.3.7.min.js"></script>*@
+
+<script>
+
+    $(function () {
+        var $table = $("#table");
+        $table.bootstrapTable({
+            url: '/Menu/GetList',
+            method: 'post',
+            //showColumns: true,
+            striped: true,
+            sidePagenation: 'server',
+            idField: 'id',
+            columns: [
+                {
+                    field: 'check', checkbox: true, formatter: function (value, row, index) {
+                        if (row.check == true) {
+                            return { checked: true };
+                        }
+                    }
+                },
+                { field: 'text', title: '名称' },
+                { field: 'iconCls', title: 'iconCls' },
+                { field: 'url', title: 'url' },
+                { field: 'fid', title: 'fid', valign: 'middle', align: 'center', visible: false },
+                { field: 'operate', title: '操作', align: 'center', events: operateEvents, formatter: 'operateFormatter' }
+            ],
+            treeShowField: 'text',
+            parentIdField: 'fid',
+            onLoadSuccess: function (data) {
+                $table.treegrid({
+                    initialState: 'collapsed',//收缩 expanded
+                    treeColumn: 1,//指明第几列数据改为树形
+                    expanderExpandedClass: 'glyphicon glyphicon-triangle-bottom',
+                    expanderCollapsedClass: 'glyphicon glyphicon-triangle-right',
+                    //expanderExpandedClass: 'glyphicon glyphicon-minus',  //图标样式
+                    //expanderCollapsedClass: 'glyphicon glyphicon-plus',
+                    onChange: function () {
+                        $table.bootstrapTable('resetWidth');
+                    }
+                });
+            }
+        });
+
+    })
+
+    var flag = 0; //0-新增，1-修改
+
+    // 格式化按钮
+    function operateFormatter(value, row, index) {
+        return [
+            '<button type="button" class="btn btn-info btn-sm RoleOfadd" style="margin-right:15px;"><span class="glyphicon glyphicon-plus"></span> 新增</button>',
+            '<button type="button" class="btn btn-primary btn-sm RoleOfedit" style="margin-right:15px;"><span class="glyphicon glyphicon-pencil"></span> 修改</button>',
+            '<button type="button" class="btn btn-warning btn-sm RoleOfdelete"><span class="glyphicon glyphicon-remove"></span> 删除</button>'
+        ].join('');
+
+    }
+
+    //初始化操作按钮的方法
+    window.operateEvents = {
+        'click .RoleOfadd': function (e, value, row, index) {
+            add(row);
+        },
+        'click .RoleOfdelete': function (e, value, row, index) {
+            var r = confirm("确定删除，删除不可恢复!");
+            if (r == true) {
+                del(row.id);
+            }
+        },
+        'click .RoleOfedit': function (e, value, row, index) {
+            update(row);
+        }
+    };
+
+    function add(row) {
+        $('#myModal').modal('show');
+        $('#myModalLabel').text('添加菜单');
+        flag = 0;
+        //$("#menuForm").setForm(row);
+        $("#id").val(0);
+        $("#fid").val(row.id);
+    }
+    function del(id) {
+        debugger
+        $.ajax({
+            url: "/Menu/Delete",
+            type: "POST",
+            dataType: "json",
+            data: { "id": id },
+            async: true,
+            success: function (result) {
+                if (result.code == 1) {
+                    toastr.success("保存成功");
+                    $("#table").bootstrapTable('refresh');
+                }
+                else {
+                    toastr.success("保存失败");
+                }
+            },
+            beforeSend: function () {
+                loading7();
+            },
+            error: function () {
+
+            },
+            complete: function () {
+                removeLoading("");
+            }
+        });
+    }
+    function update(row) {
+        $('#myModalLabel').text('修改菜单');
+        flag = 1;
+        $('#myModalLabel').text('添加第一级菜单');
+        $("#id").val(row.id);
+        $("#fid").val(row.fid);
+        $("#url").val(row.url);
+        $("#text").val(row.text);
+        $("#iconCls").val(row.iconCls);
+        $('#myModal').modal('show');
+
+    }
+      
+    function addFistNode() {
+        flag = 2;
+        $('#myModalLabel').text('添加第一级菜单');
+        $("#id").val(0);
+        $("#fid").val(0);
+        $('#myModal').modal('show');
+    }
+
+    function checkForm() { 
+        var menuFormdata = $('#menuForm').serializeArray();
+        var data = FormDataToJsonObj(menuFormdata);
+        if (data.text == "") {
+            toastr.error("请输入名称!");
+            return false;
+        }
+        if (data.url == "") {
+            toastr.error("请输入URL!");
+            return false;
+        }
+        return true;
+    }
+
+    function saveSubmit() {
+        if (!checkForm()) {
+            return;
+        }
+        var menuFormdata = $('#menuForm').serializeArray();
+        var data = FormDataToJsonObj(menuFormdata);
+        if (flag == 0 || flag == 2) {   
+            $.ajax({
+                url: "/Menu/Add",
+                type: "POST",
+                dataType: "json",
+                data: data,
+                async: true,
+                success: function (result) {
+                    if (result.code == 1) {
+                        toastr.success("保存成功");
+                        $("#table").bootstrapTable('refresh');
+                        $('#myModal').modal('hide');
+                    }
+                    else {
+                        toastr.success("保存失败");
+                    }
+                },
+                beforeSend: function () {
+                    loading7();
+                },
+                error: function () {
+
+                },
+                complete: function () {
+                    removeLoading("");
+                }
+            });
+        }
+        else if(flag == 1){
+            $.ajax({
+                url: "/Menu/Update",
+                type: "POST",
+                dataType: "json",
+                data: data,
+                async: true,
+                success: function (result) {
+                    if (result.code == 1) {
+                        toastr.success("保存成功");
+                        $("#table").bootstrapTable('refresh');
+                        $('#myModal').modal('hide');
+                    }
+                    else {
+                        toastr.success("保存失败");
+                    }
+                },
+                beforeSend: function () {
+                    loading7();
+                },
+                error: function () {
+
+                },
+                complete: function () {
+                    removeLoading("");
+                }
+            });
+        } 
+    }
+
+
+    function FormDataToJsonObj(formData) {
+        var obj = {};
+        $.each(formData, function (i, e) {
+            obj[e.name] = e.value;
+        });
+        return obj;
+    }
+     
+
+</script>
+
